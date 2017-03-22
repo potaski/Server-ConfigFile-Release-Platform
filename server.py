@@ -9,6 +9,7 @@ from tornado.options import define, options
 
 
 define('port', default=80, help='run on the given port', type=int)
+define("debug",default=True,help="Debug Mode",type=bool)
 
 def main():
     tornado.options.parse_command_line()

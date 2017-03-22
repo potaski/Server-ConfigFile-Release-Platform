@@ -9,5 +9,5 @@ conn = MySQLdb.connect(host='localhost',
                        user='root',
                        passwd='root',
                        db='ansible_log',
-                       charset='utf-8')
+                       charset='utf8')
 cur = conn.cursor()
