@@ -7,7 +7,7 @@ import MySQLdb
 conn = MySQLdb.connect(host='localhost',
                        port=3306,
                        user='root',
-                       passwd='root',
+                       passwd='zijicaiba',
                        db='ansible_log',
-                       charset='utf-8')
+                       charset='utf8')
 cur = conn.cursor()
