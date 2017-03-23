@@ -30,3 +30,11 @@ class IndexHandler(tornado.web.RequestHandler):
         else:
             self.write('There is no this user.')
 
+
+class ArgHandler(tornado.web.RequestHandler):
+    def get(self):
+        value = self.get_argument('key', 'default_get_value')
+        self.write('this is the get value: {}'.format(value))
+    def post(self):
+        value = self.get_body_argument('key', 'default_post_value')
+        self.write('this is the post value: {}'.format(value))
