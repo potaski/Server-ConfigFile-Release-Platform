@@ -26,7 +26,8 @@ def run_playbook(group_id):
             store json to http://{ip}/statics/playbook/{id}.json
             store json url to mysql
             '''
-
+            cmd_out = cmd_out.split('.retry\n')[-1]
+            return cmd_out
             
         else:
             return None
@@ -59,7 +60,6 @@ class PlaybookAPI(tornado.web.RequestHandler):
                 dict_insert = {'task_desc': task_desc,
                                'user': user,
                                'group_id': group_id,
-                               'task_log': 'null',
                                'all_log': res_json,
                                'run_timestamp': run_time}
                 res = pb_log.write_table(dict_insert)
