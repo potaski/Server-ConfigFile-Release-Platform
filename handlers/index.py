@@ -3,12 +3,14 @@
 
 import tornado.web
 import methods.readdb as mrd
+import os
 
 
 class IndexHandler(tornado.web.RequestHandler):
 
     def get(self):
-        self.render('index.html')
+        # self.render('index.html')
+        self.write(os.getcwd())
 
     def post(self):
         username = self.get_argument('username')

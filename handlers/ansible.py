@@ -20,8 +20,14 @@ def run_playbook(group_id):
         (cmd_state, cmd_out) = commands.getstatusoutput(cmd)
         
         if cmd_state == 0:
-            cmd_out = cmd_out.split('.retry\n')[-1]
-            return cmd_out
+            '''
+            analysis json get log
+            store log to mysql
+            store json to http://{ip}/statics/playbook/{id}.json
+            store json url to mysql
+            '''
+
+            
         else:
             return None
 
