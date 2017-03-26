@@ -11,4 +11,5 @@ from handlers.ansible import *
 url = [(r'/', IndexHandler),
        (r'/argtest', ArgHandler),
        (r'/api/playbook', PlaybookAPI),
+       #(r'/ansible/log', QueryPlaybookResult),
       ]

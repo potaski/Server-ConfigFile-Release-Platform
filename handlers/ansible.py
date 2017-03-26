@@ -62,25 +62,28 @@ class PlaybookAPI(tornado.web.RequestHandler):
                                'group_id': group_id,
                                'all_log': res_json,
                                'run_timestamp': run_time}
-                res = pb_log.write_table(dict_insert)
-                out_string = '{}<br>{}'.format(group_id, res)
-                self.write(res)
+                insert_res = pb_log.write_table(dict_insert)
+                if insert_res:
+                    out_string = """<html><head><title>稍候。。。</title></head>
+<body>
+<script language='javascript'>document.location = 'http://192.168.71.128/ansible/log?group_id={}&run_timestamp={}'</script>
+</body>
+</html>""".format(group_id, run_time)
+                    self.write(out_string)
             else:
                 self.write('get error')
         else:
             self.write('time is not right')
 
-    
-    """
+ 
+class QueryPlaybookResult(tornado.web.RequestHandler):
+
     def get(self):
-        # http://192.168.1.1/playbook?group_id=xxx
-        group_id = self.get_argument('group_id')
-        playbook = '/etc/ansible/ansible_playbook/{id}.yml'.format(id=group_id)
-        cmd = '/home/zhangwei/pb/run_pb.py --playbook=/home/zhangwei/pb/test.yml'
-        (cmd_state, cmd_out) = commands.getstatusoutput(cmd)
-        out_string = '{group_id}<br>{cmd_state}<br>{cmd_out}'.format(group_id=group_id,
-                                                                     cmd_state=cmd_state,
-                                                                     cmd_out=cmd_out)
-        self.write(out_string)
-    """
+        dict_args = {}
+        dict_args['group_id'] = self.get_body_argument('group_id')        
+        dict_args['run_timestamp'] = self.get_body_argument('run_timestamp')
+        try:
+            json_log = pb_log.read_table(dict_args)
+            if json_log:
+                # analysis json log and create html page 
 
