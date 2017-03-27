@@ -1,13 +1,3 @@
-create table playbook_log (
-id int not null auto_increment,
-task_desc varchar(100) not null,
-user varchar(30) not null,
-group_id varchar(50) not null,
-all_log mediumtext not null,
-run_timestamp varchar(30) not null,
-log_time timestamp not null default current_timestamp,
-primary key (id));
-
 # coding:utf-8
 
 """
@@ -84,19 +74,3 @@ print '---TOTAL'
 for k,v in dict_out.items():
     print '{} {}'.format(k, v)
 
-"""
-Dict Format
-"""
-dict_ip2task2state[ip] = {
-    facter: {
-        is_changed: state
-        is_unreachable: state
-        msg: something
-        }
-    task: {
-        is_skipped: state
-        is_changed: state
-        is_failed: state
-        msg: something
-        }
-}

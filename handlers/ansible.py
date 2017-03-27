@@ -80,10 +80,56 @@ class QueryPlaybookResult(tornado.web.RequestHandler):
 
     def get(self):
         dict_args = {}
-        dict_args['group_id'] = self.get_body_argument('group_id')        
-        dict_args['run_timestamp'] = self.get_body_argument('run_timestamp')
+        dict_args['group_id'] = self.get_argument('group_id')        
+        dict_args['run_timestamp'] = self.get_argument('run_timestamp')
         try:
             json_log = pb_log.read_table(dict_args)
             if json_log:
                 # analysis json log and create html page 
+                dict_out = {}
+                aa = json_log['plays']
+                ba = json_log['tasks']
 
+                ab = aa[0]['tasks']
+                for tmp in ab:
+                    dict_tmp = {}
+                    task_name = tmp['task']['name']
+
+                    if tmp['task']['name'] == '':
+                        # facter state
+
+                        facter_result = tmp['hosts']
+                        task_name = 'facter'
+                        for ip, res in facter_result.items():
+                            try:
+                                dict_tmp[task_name]['is_unreachable'] = res['unreachable']
+                                dict_tmp[task_name]['is_changed'] = res['changed']
+                                dict_tmp[task_name]['msg'] = res['msg'].strip()
+                                dict_out[ip] = dict_tmp
+                            except:
+                                continue
+
+                    else:
+                        # task state
+
+                        task_results = tmp['hosts']
+                        for ip, res in task_results.items():
+                            try:
+                                dict_tmp[task_name]['is_skipped'] = res['results'][0]['skipped']
+                            except:
+                                dict_tmp[task_name]['is_skipped'] = 'False'
+                            dict_tmp[task_name]['is_changed'] = res['changed']
+                            try:
+                                dict_tmp[task_name]['is_failded'] = res['failed']
+                            except:
+                                dict_tmp[task_name]['is_failded'] = 'False'
+                            try:
+                                dict_tmp[task_name]['msg'] = res['msg']
+                            except:
+                                pass
+                            dict_out[ip] = dict_tmp
+
+                    seld.write(str(dict_out))
+
+        except:
+            self.write('read db error')
