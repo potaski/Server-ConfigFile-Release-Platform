@@ -5,9 +5,5 @@
     <title>Playbook Result</title>
 </head>
 <body>
-{% for ip, task in dict.items() %}
-    {{ ip }}<br>
-    {{ task }}<br>
-    {{ task['nginx config'] }}
-{% end %}
+{% raw my_content %}
 </body>

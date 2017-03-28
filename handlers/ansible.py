@@ -169,7 +169,37 @@ class QueryPlaybookResult(tornado.web.RequestHandler):
         json_str = pb_log.read_table(dict_args)
         json_dict = json.loads(json_str)
         
-        out_string = json.dumps(json_dict, indent=4, sort_keys=True)
+        # out_string = json.dumps(json_dict, indent=4, sort_keys=True)
         # self.write(out_string)
-
-        self.render('playbook_result.html', dict=json_dict)
+        
+        out_html = ''
+        
+        for ip, task2state in json_dict.items():
+            # out_html = out_html + '<p>{}</p>\n'.format(ip)
+            for task, state2info in task2state.items():
+                # out_html = out_html + '<p>{}</p>\n'.format(task)
+                info = 'IP: {}, TaskName: {},'.format(ip, task)
+                
+                if task == 'facter':
+                    chk_ssh = False
+                    
+                for state, info in state2info.items():
+                
+                    if chk_ssh:
+                        if state == 'is_unreachable' and info == 'True':
+                            info = info + 'State: ssh_unreachable'
+                            
+                    # out_html = out_html + '<p>{}: {}</p>\n'.format(state, info)
+                    if state == 'is_skipped' and info == 'True':
+                        info = info + 'State: 任务忽略本机不执行'
+                        continue
+                    elif state == 'is_failed' and info == 'True':
+                        info = info + 'State: 任务失败, Msg: {}'.format(state2info['msg'])
+                    elif state == 'is_changed' and info == 'True':
+                        info = info + 'State: 任务已执行，修改成功'
+                    elif state == 'is_changed' and info == 'False':
+                        info = info + 'State: 任务已执行，未发现任何改动'
+                    else:
+                        info = info + 'State: Unknow'
+                    
+        self.render('playbook_result.html', my_content=out_html)
