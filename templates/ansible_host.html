@@ -1,0 +1,22 @@
+<html>
+<body>
+<title>Tianya Ansible</title>
+<h3>按组执行Playbook</h3>
+
+<p>更新/etc/ansible/ansible_file文件</p>
+
+<p>更新/etc/ansible/ansible_playbook文件</p>
+
+<p>点击组名查看服务器组具体IP信息</p>
+
+<form name="input" action="/playbook/run" method="get">
+    <p><input type="radio" name="group_id" value="test" /> <a href="/hosts?group_id=test">测试服务器组</a></p>
+    <p><input type="radio" name="group_id" value="Group_222" />Group_222</p>
+    {% raw my_content %}
+    <input type="submit" value="Run Playbook" />
+</form>
+
+<p></p>
+
+</body>
+</html>

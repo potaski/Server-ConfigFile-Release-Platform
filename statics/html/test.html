@@ -1,0 +1,17 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src="{{ static_url("js/jquery.min.js")  }}"></script>
+    <script src="{{ static_url("js/script.js")  }}"></script>
+    <title>Ansible Host Group</title>
+</head>
+<body>
+    <h2>Run Playbook</h2>
+    <form method="POST">
+        <p><input type="checkbox" name="group_id" value="group_id" />Group 0001</p>
+        <p><input type="BUTTON" value="execute playbook" id="runplaybook" /></p>
+    </form>
+</body>
+</html>

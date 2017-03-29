@@ -8,11 +8,13 @@ reload(sys)
 sys.setdefaultencoding('utf-8')
 
 from handlers.index import *
-from handlers.ansible import * 
+from handlers.ansible import *
+from handlers.hosts import *
 
 
-url = [(r'/', IndexHandler),
+url = [(r'/', PrintHosts),
        (r'/argtest', ArgHandler),
-       (r'/playbook/api', PlaybookAPI),
+       (r'/playbook/run', RunPlaybook),
        (r'/playbook/log', QueryPlaybookResult),
+       (r'/hosts/all', PrintHosts),
       ]

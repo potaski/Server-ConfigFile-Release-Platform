@@ -42,16 +42,16 @@ def playbook_callback_analysis(pb_json):
     ab = aa[0]['tasks']
 
     for element in ab:
-        dict_task2state = {}
         task_name = element['task']['name']
         
         if task_name == '':
             # facter state
             task_name = 'facter'
             facter_result = element['hosts']
-            dict_state2info = {}
             
             for ip, res in facter_result.items():
+                dict_state2info = {}
+                dict_task2state = {}
                 try:
                     dict_state2info['is_unreachable'] = str(res['unreachable'])
                 except:
@@ -65,16 +65,17 @@ def playbook_callback_analysis(pb_json):
                 except:
                     pass
                     
-            dict_task2state[str(task_name)] = dict_state2info
-            dict_ip2log[str(ip)] = dict_task2state
+                dict_task2state[str(task_name)] = dict_state2info
+                dict_ip2log[str(ip)] = dict_task2state
             continue
                     
         else:
             # task state
             task_result = element['hosts']
-            dict_state2info = {}
             
             for ip, res in task_result.items():
+                dict_state2info = {}
+                dict_task2state = {}
                 try:
                     dict_state2info['is_skipped'] = str(res['results'][0]['skipped'])
                 except:
@@ -89,8 +90,8 @@ def playbook_callback_analysis(pb_json):
                 except:
                     pass
                     
-            dict_task2state[str(task_name)] = dict_state2info
-            dict_ip2log[str(ip)] = dict_task2state
+                dict_task2state[str(task_name)] = dict_state2info
+                dict_ip2log[str(ip)] = dict_task2state
 
     return dict_ip2log
 
@@ -105,7 +106,7 @@ def playbook_callback_store(pb_json, run_time):
     return out_file 
 
 
-class PlaybookAPI(tornado.web.RequestHandler):
+class RunPlaybook(tornado.web.RequestHandler):
 
     def get(self):
         """
@@ -173,33 +174,35 @@ class QueryPlaybookResult(tornado.web.RequestHandler):
         # self.write(out_string)
         
         out_html = ''
+        out_desc = ''
         
         for ip, task2state in json_dict.items():
-            # out_html = out_html + '<p>{}</p>\n'.format(ip)
+            out_html = out_html + '<p>IP = {}</p>\n'.format(ip)
+            
             for task, state2info in task2state.items():
-                # out_html = out_html + '<p>{}</p>\n'.format(task)
-                info = 'IP: {}, TaskName: {},'.format(ip, task)
+                out_html = out_html + '<p>任务名称 = {}</p>\n'.format(task)
                 
                 if task == 'facter':
-                    chk_ssh = False
-                    
-                for state, info in state2info.items():
                 
-                    if chk_ssh:
-                        if state == 'is_unreachable' and info == 'True':
-                            info = info + 'State: ssh_unreachable'
-                            
-                    # out_html = out_html + '<p>{}: {}</p>\n'.format(state, info)
-                    if state == 'is_skipped' and info == 'True':
-                        info = info + 'State: 任务忽略本机不执行'
-                        continue
-                    elif state == 'is_failed' and info == 'True':
-                        info = info + 'State: 任务失败, Msg: {}'.format(state2info['msg'])
-                    elif state == 'is_changed' and info == 'True':
-                        info = info + 'State: 任务已执行，修改成功'
-                    elif state == 'is_changed' and info == 'False':
-                        info = info + 'State: 任务已执行，未发现任何改动'
-                    else:
-                        info = info + 'State: Unknow'
+                    if state2info['is_unreachable'] == 'True':
+                        out_desc = '结果：ssh失败，错误信息："{}"<br>'.format(state2info['msg'])
+                        
+                else:
+                
+                    if state2info['is_changed'] == 'True' and state2info['is_failed'] == 'True':
+                        out_desc = '结果：检查到变更，但是失败了，错误信息："{}"<br>'.format(state2info['msg'])
+                        
+                    if state2info['is_changed'] == 'True' and state2info['is_failed'] == 'False':
+                        out_desc = '结果：检查到变更，变更成功<br>'
+                        
+                    if state2info['is_changed'] == 'False':
+                        out_desc = '结果：没有检查到变更，什么都不做<br>'
+                        
+                    if state2info['is_skipped'] == 'True':
+                        out_desc = '结果：此任务不符合本机，忽略不执行<br>'
+            
+            out_html = out_html + out_desc
                     
-        self.render('playbook_result.html', my_content=out_html)
+        
+        self.write(out_html)
+        # self.render('playbook_result.html', my_content=info)

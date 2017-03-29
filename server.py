@@ -4,6 +4,7 @@
 import tornado.ioloop
 import tornado.options
 import tornado.httpserver
+import tornado.autoreload
 from application import application
 from tornado.options import define, options
 
