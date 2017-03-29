@@ -8,7 +8,7 @@ import datetime
 import ConfigParser
 
 
-class PrintHosts(tornado.web.RequestHandler):
+class HostGroup(tornado.web.RequestHandler):
 
     def get(self):
         hosts_file = '/etc/ansible/hosts'
@@ -26,8 +26,21 @@ class PrintHosts(tornado.web.RequestHandler):
             else:
                 group_info = ty_ansbile.info_switch(method='id2info', data_in=group_id)
                 
-            my_content = '<p><input type="radio" name="group_id" value="{group_id}"/>  {group_info}  <a href="/hosts?group_id={group_id}">详情</a></p>\n'
-            my_content = my_content.format(group_id=group_id, group_info=group_info)
+            out_string = '<p><input type="radio" name="group_id" value="{group_id}"/>  {group_info}  <a href="/hosts?group_id={group_id}">详情</a></p>\n'
+            out_string = out_string.format(group_id=group_id, group_info=group_info)
 
         #self.write(out_html)
-        self.render('ansible_host.html', my_content=my_content)
+        self.render('ansible_host.html', out_string=out_string)
+        
+        
+class HostGroupIPs(tornado.web.RequestHandler):
+    
+    def get(self):
+        group_id = self.get_argument('group_id')
+        ansible_host = ty_ansible.AnsibleHost()
+        lst_ip = ansible_host.get_group_lstip(group_id)
+        
+        out_string = ''
+        for ip in lst_ip:
+            out_string = out_string + '{}<br>\n'.format(ip)
+        

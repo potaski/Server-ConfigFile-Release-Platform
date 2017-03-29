@@ -12,9 +12,8 @@ from handlers.ansible import *
 from handlers.hosts import *
 
 
-url = [(r'/', PrintHosts),
-       (r'/argtest', ArgHandler),
+url = [(r'/', HostGroup),
        (r'/playbook/run', RunPlaybook),
        (r'/playbook/log', QueryPlaybookResult),
-       (r'/hosts/all', PrintHosts),
+       (r'/hosts', HostGroupIPs),
       ]
