@@ -1,0 +1,18 @@
+<html>
+<body>
+<title>Tianya Ansible</title>
+
+<h3>搜索结果</h3>
+<hr>
+<form name="input" action="/playbook/run" method="get">
+    <!-- 一个按钮例子 
+    <input type="submit" value="Run Playbook" style="height:30px;width:120px;" />
+    -->
+    <!-- 一个选项例子 
+    <p><input type="radio" name="group_id" value="{group_id}"/>  {group_info}  <a href="/hosts?group_id={group_id}">查看IP列表</a></p>
+    -->
+    <!-- 在my_content里每10行放一个提交按钮 -->
+    {% raw my_content %}
+</form>
+</body>
+</html>
