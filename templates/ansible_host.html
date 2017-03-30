@@ -1,22 +1,27 @@
 <html>
 <body>
 <title>Tianya Ansible</title>
-<h3>按组执行Playbook</h3>
-
-<p>更新/etc/ansible/ansible_file文件</p>
-
-<p>更新/etc/ansible/ansible_playbook文件</p>
-
-<p>点击组名查看服务器组具体IP信息</p>
-
-<form name="input" action="/playbook/run" method="get">
-    <p><input type="radio" name="group_id" value="test" /> <a href="/hosts?group_id=test">测试服务器组</a></p>
-    <p><input type="radio" name="group_id" value="Group_222" />Group_222</p>
-    {% raw my_content %}
-    <input type="submit" value="Run Playbook" style="height:30px;width:80px;" />
+<h3>点击一下让ansible从git上拉取最新配置</h3>
+<hr>
+<p><a href="/gitpull?repo=ansible_file">ansible_file更新</a><br><a href="/gitpull?repo=ansible_playbook">ansible_playbook更新</a></p>
+<br>
+<h3>搜索服务器组</h3>
+<hr>
+<form name="input" action="/hosts/search" method="get">
+    <p>产品名称：<input type="text" name="prod"/> 应用类别：<input type="text" name="app"/> 绑定域名：<input type="text" name="domain"/> 功能类型：<input type="text" name="func"/> </p>
+    <p>填一个就行，支持泛搜索，但可能会出现多个结果。想精确就填完整</p>
+    <input type="submit" value="搜索" style="height:30px;width:60px;" />
 </form>
-
-<p></p>
-
+<br>
+<h3>所有服务器组</h3>
+<hr>
+<form name="input" action="/playbook/run" method="get">
+    <!-- 一个按钮例子 -->
+    <input type="submit" value="Run Playbook" style="height:30px;width:120px;" />
+    <!-- 一个选项例子 -->
+    <p><input type="radio" name="group_id" value="{group_id}"/>  {group_info}  <a href="/hosts?group_id={group_id}">查看IP列表</a></p>
+    <!-- 在my_content里每10行放一个提交按钮 -->
+    {% raw my_content %}
+</form>
 </body>
 </html>

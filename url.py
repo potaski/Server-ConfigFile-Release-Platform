@@ -16,4 +16,5 @@ url = [(r'/', HostGroup),
        (r'/playbook/run', RunPlaybook),
        (r'/playbook/log', QueryPlaybookResult),
        (r'/hosts', HostGroupIPs),
+       (r'/hosts/search', QueryHostGroup),
       ]

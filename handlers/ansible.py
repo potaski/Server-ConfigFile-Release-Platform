@@ -7,6 +7,7 @@ import commands
 import json
 import methods.playbook_log as pb_log
 import time
+import ty_ansible
 from multiprocessing import Process
 
 
@@ -206,3 +207,66 @@ class QueryPlaybookResult(tornado.web.RequestHandler):
         
         self.write(out_html)
         # self.render('playbook_result.html', my_content=info)
+        
+        
+class QueryHostGroup(tornado.web.RequestHandler):
+
+    def get(self):
+        lst_keys = ['prod', 'app', 'domain', 'func']
+        dict_info = {}
+        dict_id = {}
+        
+        for key in lst_keys:
+            try:
+                dict_info[key] = self.get_argument(key)
+            except:
+                pass
+                
+        obj_db = ty_ansible.AnsibleDB()
+        conn_db = obj_db.run_sql()
+        
+        obj_host = ty_ansible.AnsibleHost()
+        dict_group2ip = obj_host.get_all_host()
+        lst_group_id = dict_group2ip.keys()
+        
+        out_group = []
+        
+        for type, info in dict_info.items():
+            sql = 'select {type}_id from t_{type} where {type} like "%{v}%"'.format(type=type, v=info)
+            res = conn_db.execute(sql)
+            res_list = res.fetchall()
+            for a in res_list:
+                id = a[0]
+                
+                for group_id in lst_group_id:
+                    if id in group_id:
+                        out_group.append(group_id)
+                
+        del group_id
+
+        if len(out_group) == 0:
+            out_string = '<p> 共有 0 个搜索结果 </p>'
+            self.render('ansible_host_search.html', my_content=out_string)
+        else:
+            out_group = list(set(out_group))
+            out_group.sorted()
+            count_line = 0
+            out_string = ''
+            submit_icon = '<input type="submit" value="Run Playbook" style="height:30px;width:120px;" />'
+            
+            for group_id in out_group:
+            
+                if group_id.lower() == 'test':
+                    group_info = '测试服务器组'
+                else:
+                    group_info = ty_ansbile.info_switch(method='id2info', data_in=group_id)
+                    
+                out_string = '<p><input type="radio" name="group_id" value="{group_id}"/>  {group_info}  <a href="/hosts?group_id={group_id}">查看IP列表</a></p>\n'
+                out_string = out_string.format(group_id=group_id, group_info=group_info)
+                count_line += 1
+                
+                if str(count_line)[-1] == '9':
+                    out_string = out_string + '\n' + submit_icon
+
+            #self.write(out_html)
+            self.render('ansible_host_search.html', my_content=out_string)
